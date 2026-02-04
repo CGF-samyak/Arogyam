@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Arogyam App</title>
+  
+  <link rel="manifest" href="manifest.json">
+  
+  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/iDeewan/Sadhika_Assets/main/Arogyam_logo_1.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#3b82f6">
+
+  <style>
+    /* Reset margins to ensure full screen */
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      background-color: #f3f4f6; /* Light gray background */
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    
+    /* Full screen iframe */
+    iframe {
+      border: none;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    
+    /* Loading Placeholder */
+    #loader {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      color: #555;
+    }
+    
+    /* Logo in Loader */
+    #loader img {
+        width: 80px;
+        height: auto;
+        margin-bottom: 10px;
+    }
+    
+    /* Spinner Animation */
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #ddd;
+      border-top: 4px solid #3b82f6; /* Blue to match Arogyam */
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Install Button */
+    #installBtn {
+        display: none; 
+        position: absolute; 
+        bottom: 30px; 
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999; 
+        padding: 12px 24px; 
+        background: #2563eb; 
+        color: white; 
+        border: none; 
+        border-radius: 50px; 
+        cursor: pointer; 
+        font-weight: bold; 
+        font-size: 16px;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+        transition: transform 0.2s;
+        white-space: nowrap;
+    }
+    #installBtn:active {
+        transform: translateX(-50%) scale(0.95);
+    }
+  </style>
+</head>
+<body>
+
+  <div id="loader">
+      <img src="https://raw.githubusercontent.com/iDeewan/Sadhika_Assets/main/Arogyam_logo_1.png" alt="Logo">
+      <div class="spinner"></div>
+      <div>Loading Arogyam...</div>
+  </div>
+
+  <iframe 
+    src="https://script.google.com/macros/s/AKfycbwMl3j68LOZODqrBme3i6_KhGENVaMilZPKQ-X84nIAMHerBB5KHt8IwdkgBBKVDVYB-A/exec" 
+    id="appFrame"
+    onload="document.getElementById('loader').style.display='none';"
+    allow="geolocation; microphone; camera; display-capture">
+  </iframe>
+
+  <button id="installBtn">
+    📲 Install App
+  </button>
+
+<script>
+  let deferredPrompt;
+  const installBtn = document.getElementById('installBtn');
+
+  // 1. Capture the Install Prompt
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.style.display = 'block';
+    console.log("PWA Install Ready");
+  });
+
+  // 2. Trigger Install on Click
+  installBtn.addEventListener('click', (e) => {
+    installBtn.style.display = 'none';
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+            console.log('User outcome:', choiceResult.outcome);
+            deferredPrompt = null;
+        });
+    }
+  });
+
+  // 3. Register Service Worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('SW Registered'))
+      .catch(err => console.log('SW Error', err));
+  }
+</script>
+
+</body>
+</html>
