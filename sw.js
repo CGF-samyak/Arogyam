@@ -1,12 +1,11 @@
-const CACHE_NAME = 'arogyam-shell-v2';
+const CACHE_NAME = 'arogyam-shell-v3'; // Incremented version to force update
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
-  'https://raw.githubusercontent.com/iDeewan/Sadhika_Assets/main/Arogyam_logo_1.png'
+  './icon.png' // Now caching the local file
 ];
 
-// 1. Install: Cache the shell files
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -16,7 +15,6 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// 2. Activate: Clear old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keyList) => {
@@ -30,10 +28,8 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// 3. Fetch: Serve from cache first
 self.addEventListener('fetch', (event) => {
-  // Only cache same-origin requests (the shell)
-  // We do NOT cache the iframe content (Google Script) as it is dynamic
+  // Strategy: Stale-while-revalidate for the shell, Network-only for the Google Script
   if (event.request.mode === 'navigate') {
     event.respondWith(
       caches.match('./index.html').then((response) => {
@@ -42,7 +38,7 @@ self.addEventListener('fetch', (event) => {
     );
     return;
   }
-
+  
   event.respondWith(
     caches.match(event.request).then((response) => {
       return response || fetch(event.request);
