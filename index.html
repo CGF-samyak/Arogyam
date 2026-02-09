@@ -6,107 +6,139 @@
   <title>Arogyam App</title>
   
   <link rel="manifest" href="manifest.json">
+  
   <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/iDeewan/Sadhika_Assets/main/Arogyam_logo_1.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#3b82f6">
 
   <style>
+    /* Reset margins to ensure full screen */
     body, html {
       margin: 0;
       padding: 0;
       height: 100%;
       width: 100%;
-      background-color: #f3f4f6;
+      overflow: hidden;
+      background-color: #f3f4f6; /* Light gray background */
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-
-    /* Card Container */
-    .card {
-      background: white;
-      padding: 40px 30px;
-      border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-      text-align: center;
-      width: 85%;
-      max-width: 400px;
     }
     
-    .logo {
-        width: 100px;
-        height: auto;
-        margin-bottom: 20px;
-    }
-
-    h1 {
-      font-size: 24px;
-      color: #333;
-      margin-bottom: 10px;
-    }
-
-    p {
-      color: #666;
-      margin-bottom: 30px;
-      font-size: 16px;
-      line-height: 1.5;
-    }
-
-    /* Main Launch Button */
-    .launch-btn {
-      display: block;
-      width: 100%;
-      padding: 15px 0;
-      background: #1a73e8; /* Google Blue */
-      color: white;
-      text-decoration: none;
-      border-radius: 50px;
-      font-weight: bold;
-      font-size: 18px;
-      box-shadow: 0 4px 15px rgba(26, 115, 232, 0.4);
-      transition: transform 0.2s, background 0.2s;
+    /* Full screen iframe */
+    iframe {
       border: none;
-      cursor: pointer;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    
+    /* Loading Placeholder */
+    #loader {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      color: #555;
+    }
+    
+    /* Logo in Loader */
+    #loader img {
+        width: 80px;
+        height: auto;
+        margin-bottom: 10px;
+    }
+    
+    /* Spinner Animation */
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #ddd;
+      border-top: 4px solid #3b82f6; /* Blue to match Arogyam */
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
-    .launch-btn:active {
-      transform: scale(0.98);
-      background: #1557b0;
-    }
-
-    /* Install Button (Hidden by default) */
+    /* Install Button */
     #installBtn {
         display: none; 
-        margin-top: 20px;
-        padding: 10px 20px; 
-        background: transparent; 
-        color: #1a73e8; 
-        border: 2px solid #1a73e8; 
+        position: absolute; 
+        bottom: 30px; 
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999; 
+        padding: 12px 24px; 
+        background: #2563eb; 
+        color: white; 
+        border: none; 
         border-radius: 50px; 
         cursor: pointer; 
-        font-weight: 600; 
-        font-size: 14px;
+        font-weight: bold; 
+        font-size: 16px;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+        transition: transform 0.2s;
+        white-space: nowrap;
+    }
+    #installBtn:active {
+        transform: translateX(-50%) scale(0.95);
+
+
+        /* Keep mobile view on large screens */
+@media (min-width: 768px) {
+  body {
+    background-color: #e5e7eb; /* Darker grey background for desktop */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Force the app to look like a phone screen */
+  iframe {
+    width: 400px; /* Width of a typical phone */
+    height: 85vh; /* 85% of screen height */
+    border-radius: 20px; /* Rounded corners */
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    background: white;
+  }
+
+  /* Center the loader */
+  #loader {
+    width: 400px; 
+    height: 85vh;
+    border-radius: 20px;
+    background: white;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  }
+}
     }
   </style>
 </head>
 <body>
 
-  <div class="card">
-      <img class="logo" src="https://raw.githubusercontent.com/iDeewan/Sadhika_Assets/main/Arogyam_logo_1.png" alt="Logo">
-      <h1>Welcome to Arogyam</h1>
-      <p>Secure login is required to access the dashboard. Click below to continue.</p>
-
-      <a class="launch-btn" href="https://script.google.com/macros/s/AKfycbwMl3j68LOZODqrBme3i6_KhGENVaMilZPKQ-X84nIAMHerBB5KHt8IwdkgBBKVDVYB-A/exec" target="_top">
-        Open Application
-      </a>
-
-      <button id="installBtn">
-        📲 Install to Home Screen
-      </button>
+  <div id="loader">
+      <img src="https://raw.githubusercontent.com/iDeewan/Sadhika_Assets/main/Arogyam_logo_1.png" alt="Logo">
+      <div class="spinner"></div>
+      <div>Loading Arogyam...</div>
   </div>
+
+  <iframe 
+    src="https://script.google.com/macros/s/AKfycbwMl3j68LOZODqrBme3i6_KhGENVaMilZPKQ-X84nIAMHerBB5KHt8IwdkgBBKVDVYB-A/exec" 
+    id="appFrame"
+    onload="document.getElementById('loader').style.display='none';"
+    allow="geolocation; microphone; camera; display-capture">
+  </iframe>
+
+  <button id="installBtn">
+    📲 Install App
+  </button>
 
 <script>
   let deferredPrompt;
@@ -116,7 +148,7 @@
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
-    installBtn.style.display = 'inline-block';
+    installBtn.style.display = 'block';
     console.log("PWA Install Ready");
   });
 
